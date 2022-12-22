@@ -3,7 +3,7 @@
 ;; Version: 0.3.0
 ;; Package-Version: 2021.1111
 ;; Author: Peter 11111000000, sabof, D. Williams
-;; 
+;;
 ;; Homepage: https://github.com/11111000000/outshine-bullets
 
 ;; This file is NOT part of GNU Emacs.
@@ -26,6 +26,9 @@
 ;; Show outshine-mode bullets as UTF-8 characters.
 
 ;;; Code:
+;;;; test
+;;;;; foo
+;;;;;; bar
 
 (require 'outshine)
 
@@ -37,7 +40,8 @@
 ;; http://nadeausoftware.com/articles/2007/11/latency_friendly_customized_bullets_using_unicode_characters
 (defcustom outshine-bullets-bullet-list
   '(;;; Large
-    "►"        
+    "•" "•" "•" "•" "•" "•" "•"
+    ;; "►" "•" "▸"
     ;; ♥ ● ◇ ✚ ✜ ☯ ◆ ♠ ♣ ♦ ☢ ❀ ◆ ◖ ▶
     ;;; Small
     ;; ► • ★ ▸
@@ -58,26 +62,32 @@ Otherwise the face of the heading level is used."
 
 (defun outshine-bullets-level-char (level)
   "Return the desired bullet for the given heading LEVEL."
+  ;;(message "Level %s" level)
   (string-to-char
-   (nth (mod (/ (1- level) 1)
+   (nth (mod (/ (1- level) 2)
              (length outshine-bullets-bullet-list))
         outshine-bullets-bullet-list)))
 
 (defvar outshine-bullets--keywords
-  `(("^\\(;;\\|//\\)[ ]?\\([;]+\\|[*]+\\) "
-     (0 (let* ((level (- (match-end 2) (match-beginning 2) 0)))
-          (compose-region (- (match-end 0) 2)
-                          (- (match-end 0) 1)
+  `(
+    ("^\\([;][;]\\)\\([;]+[ ]\\)"
+     (0 (let* ((level (- (match-end 0) (match-beginning 0)))
+               (match-end-0  (match-end 0)))
+          (message "--level %s char %c - %d"
+                   level
+                   (outshine-bullets-level-char level)
+                   (match-end 2)
+                   )
+          (compose-region (- (match-end 0) 1)
+                          (- (match-end 0) 0)
                           (outshine-bullets-level-char level))
-          
           ;; (when (facep outshine-bullets-face-name)
-          ;;   (put-text-property (- (match-end 0)
-          ;;                         (if is-inline-task 3 2))
-          ;;                      (- (match-end 0) 1)
+          ;;   (put-text-property (- (match-end 0) 1)
+          ;;                      (- (match-end 0) 2)
           ;;                      'face
           ;;                      outshine-bullets-face-name))
           (put-text-property (match-beginning 0)
-                             (- (match-end 0) 2)
+                             (1- (match-end 0))
                              'face 'org-hide)
           ;; (put-text-property (match-beginning 0)
           ;;                    (match-end 0)
@@ -85,11 +95,11 @@ Otherwise the face of the heading level is used."
           ;;                    outshine-bullets-bullet-map)
           nil)))
 
-    ("^\\(;;\\|//\\)[ ][^*]"
-     (0 (let* ()                             
+    ("^\\(;;\\)[ ]"
+     (0 (let* ()
           (put-text-property (match-beginning 1)
                              (match-end 1)
-                             'face 'org-hide)          
+                             'face 'org-hide)
           nil)))
     ))
 
@@ -99,12 +109,13 @@ Otherwise the face of the heading level is used."
   nil nil nil
   (if outshine-bullets-mode
       (progn
+        (message "111Start Outshine mode -------------------------------")
         (font-lock-add-keywords nil outshine-bullets--keywords)
         (outshine-bullets--fontify-buffer))
     (save-excursion
       (goto-char (point-min))
       (font-lock-remove-keywords nil outshine-bullets--keywords)
-      (while (re-search-forward "^\\(;;\\|//\\)\\(;+\\|\s-\\*+\\)\\?\s-" nil t)
+      (while (re-search-forward "^\\(;;\\)\\(;+\\)\\?[ ]" nil t)
         (decompose-region (match-beginning 0) (match-end 0)))
       (outshine-bullets--fontify-buffer))))
 
