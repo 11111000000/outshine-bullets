@@ -73,11 +73,11 @@ Otherwise the face of the heading level is used."
     ("^\\([;][;]\\)\\([;]+[ ]\\)"
      (0 (let* ((level (- (match-end 0) (match-beginning 0)))
                (match-end-0  (match-end 0)))
-          (message "--level %s char %c - %d"
-                   level
-                   (outshine-bullets-level-char level)
-                   (match-end 2)
-                   )
+          ;; (message "--level %s char %c - %d"
+          ;;          level
+          ;;          (outshine-bullets-level-char level)
+          ;;          (match-end 2)
+          ;;          )
           (compose-region (- (match-end 0) 1)
                           (- (match-end 0) 0)
                           (outshine-bullets-level-char level))
@@ -108,8 +108,7 @@ Otherwise the face of the heading level is used."
   "Use UTF8 bullets in Org mode headings."
   nil nil nil
   (if outshine-bullets-mode
-      (progn
-        (message "111Start Outshine mode -------------------------------")
+      (progn        
         (font-lock-add-keywords nil outshine-bullets--keywords)
         (outshine-bullets--fontify-buffer))
     (save-excursion
