@@ -26,9 +26,6 @@
 ;; Show outshine-mode bullets as UTF-8 characters.
 
 ;;; Code:
-;;;; test
-;;;;; foo
-;;;;;; bar
 
 (require 'outshine)
 
@@ -69,10 +66,8 @@ Otherwise the face of the heading level is used."
         outshine-bullets-bullet-list)))
 
 (defvar outshine-bullets--keywords
-  `(
-    ("^\\([;][;]\\)\\([;]+[ ]\\)"
-     (0 (let* ((level (- (match-end 0) (match-beginning 0)))
-               (match-end-0  (match-end 0)))
+  `(("^\\([;][;]\\)\\([;]+[ ]\\)"
+     (0 (let* ((level (- (match-end 2) (match-beginning 2))))
           ;; (message "--level %s char %c - %d"
           ;;          level
           ;;          (outshine-bullets-level-char level)
