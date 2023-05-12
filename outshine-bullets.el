@@ -37,7 +37,7 @@
 ;; http://nadeausoftware.com/articles/2007/11/latency_friendly_customized_bullets_using_unicode_characters
 (defcustom outshine-bullets-bullet-list
   '(;;; Large
-    "•" "•" "•" "•" "•" "•" "•"
+    "•" "" "" "" "" "•" "•" "•"
     ;; "►" "•" "▸"
     ;; ♥ ● ◇ ✚ ✜ ☯ ◆ ♠ ♣ ♦ ☢ ❀ ◆ ◖ ▶
     ;;; Small
@@ -61,8 +61,7 @@ Otherwise the face of the heading level is used."
   "Return the desired bullet for the given heading LEVEL."
   ;;(message "Level %s" level)
   (string-to-char
-   (nth (mod (/ (1- level) 2)
-             (length outshine-bullets-bullet-list))
+   (nth (1- (1- level))
         outshine-bullets-bullet-list)))
 
 (defvar outshine-bullets--keywords
@@ -81,11 +80,11 @@ Otherwise the face of the heading level is used."
                                (- (match-end 0) 1)
                                'face
                                outshine-bullets-face-name))
-          
+
           (put-text-property (match-beginning 0)
                              (- (match-end 0) 2)
                              'face 'org-hide)
-          
+
           ;; (put-text-property (match-beginning 0)
           ;;                    (match-end 0)
           ;;                    'keymap
@@ -105,7 +104,7 @@ Otherwise the face of the heading level is used."
   "Use UTF8 bullets in Org mode headings."
   nil nil nil
   (if outshine-bullets-mode
-      (progn        
+      (progn
         (font-lock-add-keywords nil outshine-bullets--keywords)
         (outshine-bullets--fontify-buffer))
     (save-excursion
